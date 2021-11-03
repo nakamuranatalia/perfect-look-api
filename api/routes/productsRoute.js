@@ -6,10 +6,10 @@ const product = new productController()
 const router = Router()
 
 router
-    .post('/api/v1/products', product.createProduct)
-    .get('/api/v1/products', product.retrieveAllProduct)
-    .get('/api/v1/products/:id', product.retriveProductById)
-    .put('/api/v1/products/:id', product.updateProduct)
-    .delete('/api/v1/products/:id', product.deleteProduct)
+    .post('/api/v1/products', product.create)
+    .get('/api/v1/products', product.findAll)
+    .get('/api/v1/products/:id', product.findById)
+    .put('/api/v1/products/:id', product.update)
+    .delete('/api/v1/products/:id', product.delete)
 
 module.exports = router;

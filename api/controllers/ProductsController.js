@@ -1,7 +1,7 @@
 const db = require('../models')
 
 class ProductsController{
-    async createProduct (req, res){
+    async create (req, res){
         const newProduct = req.body
         try {
             const newCreatedProduct = await db.Products.create(newProduct)
@@ -11,7 +11,7 @@ class ProductsController{
         }
     }
 
-    async retrieveAllProduct (req, res){
+    async findAll (req, res){
         try {
             const allProducts = await db.Products.findAll();
             return res.status(200).json(allProducts)
@@ -20,7 +20,7 @@ class ProductsController{
         }
     }
 
-    async retriveProductById (req, res){
+    async findById (req, res){
         const {id} = req.params
         try {
             const oneProduct = await db.Products.findOne({where: {id:Number(id)}})
@@ -30,7 +30,7 @@ class ProductsController{
         }
     }
 
-    async updateProduct (req, res){
+    async update (req, res){
         const {id} = req.params
         const infos = req.body
         try {
@@ -42,7 +42,7 @@ class ProductsController{
         }
     }
 
-    async deleteProduct(req, res){
+    async delete (req, res){
         const {id} = req.params
         try {
             await db.Products.destroy({where: {id:Number(id)}})
