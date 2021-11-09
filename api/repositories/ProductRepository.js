@@ -13,6 +13,22 @@ class ProductRepository{
         return db.Products.findOne({where: {id:Number(id)}})
     }
 
+    async findColumn(id, columns){
+        return db.Products.findOne({
+            where: {id:id},
+            attributes: [columns],
+            raw:true
+        })
+    }
+
+    async findColumns(id, columnOne, columnTwo, columnThree){
+        return db.Products.findOne({
+            where: {id:id},
+            attributes: [columnOne, columnTwo, columnThree],
+            raw:true
+        })
+    }
+
     async update(infos, {id}){
         return db.Products.update(infos, {where: {id:Number(id)}})
     }
