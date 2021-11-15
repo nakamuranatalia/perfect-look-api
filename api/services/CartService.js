@@ -116,9 +116,7 @@ class CartService{
     }
 
     async update(infos, {id}){
-        const result = await this.findById({id})
         const cart = {
-            userId: result.userId,
             totalPrice: await this.totalPrice(infos)
         }
         
