@@ -21,5 +21,13 @@ class ProductCartRepository{
         })
     }
 
+    async findById({id}){
+        return db.ProductsCarts.findAll({
+            where: {cartId:Number(id)},
+            attributes: ["productId", "quantity"],
+            raw:true
+        })
+    }
+
 }
 module.exports = ProductCartRepository
