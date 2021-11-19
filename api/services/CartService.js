@@ -100,11 +100,65 @@ class CartService{
         return totalPrice.toFixed(2)
     }
 
+    async searchProductsAndQuantities({id}){
+        return productCartRepository.findById({id})
+    }
+
+
+    async inventorySum(infos, column){
+        let productsQuantityTotal = []
+        let productsQuantityCart = []
+        let productsId = []
+        let updatedProductQuantity = []
+
+        for(let i=0; i < infos.length; i++){
+            const productId = infos[i].productId
+            productsId.push(productId)
+            productsQuantityCart.push(infos[i].quantity)
+
+            const productsQuantity = await productRepository.findColumn(productId, column)
+            productsQuantityTotal.push(productsQuantity.quantity)
+        }
+
+        updatedProductQuantity = productsQuantityTotal.map((a,i) => a + productsQuantityCart[i])
+
+        for(let i=0; i < productsId.length; i++){
+            productRepository.update({quantity:updatedProductQuantity[i]}, {id:productsId[i]})
+        }
+
+    }
+
+    async inventorySubtraction(infos, column){
+        let productsQuantityTotal = []
+        let productsQuantityCart = []
+        let productsId = []
+        let updatedProductQuantity = []
+
+        for(const element of infos.products){
+            const productId = element.productId
+            productsId.push(productId)
+            productsQuantityCart.push(element.quantity)
+            
+            const productsQuantity = await productRepository.findColumn(productId, column)
+            productsQuantityTotal.push(productsQuantity.quantity)
+        }
+
+        updatedProductQuantity = productsQuantityTotal.map((a,i) => a - productsQuantityCart[i])
+
+        for(let i=0; i < productsId.length; i++){
+            productRepository.update({quantity:updatedProductQuantity[i]}, {id:productsId[i]})
+        }
+
+    }
+
     async create(infos){
         const cart = {
             userId: infos.userId,
             totalPrice: await this.totalPrice(infos)
         }
+
+        await this.inventorySubtraction(infos, "quantity")
+
         const id = await cartRepository.create(cart)
         await productCartRepository.create(infos, {cartId: id.dataValues.id})
 
@@ -119,15 +173,20 @@ class CartService{
         const cart = {
             totalPrice: await this.totalPrice(infos)
         }
-        
+
+        const productsandQuantities = await this.searchProductsAndQuantities({id})
+        console.log(productsandQuantities)
+        await this.inventorySum(productsandQuantities, "quantity")
         await productCartRepository.delete({cartId: id})
         await cartRepository.update(cart, {id})
+        await this.inventorySubtraction(infos, "quantity")
         await productCartRepository.create(infos, {cartId: id})
-
         return this.findById({id}) 
     }
 
     async delete({id}){
+        const productsandQuantities = await this.searchProductsAndQuantities({id})
+        await this.inventorySum(productsandQuantities, "quantity")
         return cartRepository.delete({id})
     }
 }
