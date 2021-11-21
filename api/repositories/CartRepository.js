@@ -20,6 +20,14 @@ class CartRepository{
         })
     }
 
+    async findByUserId(id){
+        return db.Carts.findOne({
+            where: {userId:id},
+            attributes: ["id"],
+            raw:true
+        })
+    }
+
     async update(infos, {id}){
         return db.Carts.update(infos, {where: {id:Number(id)}})
     }
