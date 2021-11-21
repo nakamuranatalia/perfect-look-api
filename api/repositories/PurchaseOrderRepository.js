@@ -20,6 +20,10 @@ class PurchaseOrderRepository{
         })
     }
 
+    async update(infos, {id}){
+        return db.PurchaseOrders.update(infos, {where: {id:Number(id)}})
+    }
+
 }
 
 module.exports = PurchaseOrderRepository;

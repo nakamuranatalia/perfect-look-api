@@ -25,6 +25,17 @@ class PurchaseOrderController{
         }
     }
 
+    async update (req, res){
+        const {id} = req.params
+        const infos = req.body
+        try {
+            const updatedPurchaseOrder = await service.update(infos, {id})
+            return res.status(200).json(updatedPurchaseOrder)
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    }
+
 }
 
 module.exports = PurchaseOrderController;
