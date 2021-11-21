@@ -39,6 +39,10 @@ class PurchaseOrderService{
         return purchaseOrderRepository.findById({id: orderId.dataValues.id})
 
     }
+
+    async findById({id}){
+        return purchaseOrderRepository.findById({id})
+    }
 }
 
 module.exports = PurchaseOrderService;

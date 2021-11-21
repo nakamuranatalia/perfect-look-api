@@ -14,6 +14,17 @@ class PurchaseOrderController{
         }
     }
 
+
+    async findById(req, res){
+        const {id} = req.params
+        try {
+            const onePurchaseOrder = await service.findById({id})
+            return res.status(200).json(onePurchaseOrder)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+    }
+
 }
 
 module.exports = PurchaseOrderController;
