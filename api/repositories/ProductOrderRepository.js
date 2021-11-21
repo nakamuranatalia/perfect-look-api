@@ -12,6 +12,14 @@ class ProductOrderRepository{
             await db.ProductsOrders.create(productOrder)
         }
     }
+
+    async findById({id}){
+        return db.ProductsOrders.findAll({
+            where: {orderId:Number(id)},
+            attributes: ["productId", "quantity"],
+            raw:true
+        })
+    }
     
 }
 
