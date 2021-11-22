@@ -2,11 +2,13 @@ const CartRepository = require("../repositories/CartRepository")
 const ProductRepository = require("../repositories/ProductRepository")
 const PurchaseOrderRepository = require("../repositories/PurchaseOrderRepository")
 const ProductOrderRepository = require("../repositories/ProductOrderRepository")
+const Producer = require("../producer/producer")
 
 const cartRepository = new CartRepository
 const productRepository = new ProductRepository
 const purchaseOrderRepository = new PurchaseOrderRepository
 const productOrderRepository = new ProductOrderRepository
+const producer = new Producer
 
 
 class PurchaseOrderService{
@@ -19,6 +21,15 @@ class PurchaseOrderService{
     async findCart(infos){
         const userId = infos.userId
         return cartRepository.findByUserId(userId)
+    }
+
+    async brands(infos){
+        let brands = []
+        for(const element of infos.products){
+            const brand = await productRepository.findColumn(element.productId, "brand")
+            brands.push(brand.brand)
+        }
+        return brands
     }
     
     async create(infos){
@@ -34,8 +45,15 @@ class PurchaseOrderService{
         const orderId = await purchaseOrderRepository.create(purchaseOrder)
         await productOrderRepository.create(infos, {orderId: orderId.dataValues.id})
 
-        return purchaseOrderRepository.findById({id: orderId.dataValues.id})
+        const brands = await this.brands(infos)
+        for(let i=0; i < brands.length; i++){
+            const obj = new Object()
+            obj.brand = brands[i]
+            obj.userId = infos.userId
+            await producer.produce(obj)
+        }
 
+        return purchaseOrderRepository.findById({id: orderId.dataValues.id})
     }
 
     async findById({id}){
