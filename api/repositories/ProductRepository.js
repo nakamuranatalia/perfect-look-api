@@ -29,6 +29,13 @@ class ProductRepository{
         })
     }
 
+    async findByBrand(brand){
+        return db.Products.findAll({
+            where: {brand: brand},
+            raw:true
+        })
+    }
+
     async update(infos, {id}){
         return db.Products.update(infos, {where: {id:Number(id)}})
     }
